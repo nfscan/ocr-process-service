@@ -5,6 +5,7 @@ import thread
 import time
 
 from service.ocr import *
+from service.postprocessing import TaxReceiptFuzzyRegex
 import boto
 import boto.sqs
 
@@ -32,3 +33,8 @@ if __name__ == "__main__":
     results = ocr_tool.image_to_string('images/IMG_2943_SMALL.jpeg')
     for result in results:
         print result
+
+    print 'Start - Fuzzy Matching'
+    taxReceiptFuzzyRegex = TaxReceiptFuzzyRegex(results)
+    print taxReceiptFuzzyRegex.identify_needed_fields()
+    print 'End - Fuzzy Matching'
