@@ -10,7 +10,7 @@ from tempfile import NamedTemporaryFile
 from service.ocr import *
 from service.postprocessing import TaxReceiptFuzzyRegex
 from service.aws import TaxReceiptSimpleQueueServiceIntegration, \
-    SimpleStorageServiceIntegration
+    SimpleStorageServiceIntegration, BaseSimpleQueueServiceIntegration
 import json
 
 
@@ -49,19 +49,22 @@ def handle_process_message_function(queue_name_in, message_body):
 
     print '\nStart - Fuzzy Matching'
     tax_receipt_fuzzy_regex = TaxReceiptFuzzyRegex(results)
-    print tax_receipt_fuzzy_regex.identify_needed_fields()
+    ret_value = tax_receipt_fuzzy_regex.identify_needed_fields()
+    print ret_value
     print 'End - Fuzzy Matching'
 
     end = time.time()
     elapsed = end - start
 
     print 'Execution took', elapsed, 'seconds'
+    return ret_value
 
 
 def handle_queue_out_message_function(queue_name_out, response_body):
     json_response = json.dumps(response_body)
 
-    pass
+    sqs_service = BaseSimpleQueueServiceIntegration()
+    sqs_service.send_message(queue_name_out, json_response)
 
 if __name__ == "__main__":
 

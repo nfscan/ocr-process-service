@@ -112,7 +112,7 @@ class TaxReceiptSimpleQueueServiceIntegration(SimpleQueueServiceIntegration):
                              'handle_queue_out_message_function parameter')
 
     def handle_process_message(self, message_body):
-        self.handle_process_message_function(self.queue_name_in, message_body)
+        return self.handle_process_message_function(self.queue_name_in, message_body)
 
     def handle_queue_out_message(self, response_body):
-        self.handle_queue_out_message_function(self.queue_name_out, response_body)
+        return self.handle_queue_out_message_function(self.queue_name_out, response_body)
