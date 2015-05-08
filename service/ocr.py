@@ -18,13 +18,30 @@ class PyOCRIntegration(object):
                                              'PATH variable of your system')
         result = []
         for tool in self.tools:
-            txt = tool.image_to_string(
-                Image.open(filename),
-                lang=self.lang,
-                builder=pyocr.builders.TextBuilder()
-            )
 
-            result.append(txt)
+            if tool.get_name() == "Tesseract":
+                txt = tool.image_to_string(
+                    Image.open(filename),
+                    lang=self.lang
+                )
+                result.append(txt)
+            else:
+                # Default Cuneiform parameters
+                txt = tool.image_to_string(
+                    Image.open(filename),
+                    lang=self.lang
+                )
+                result.append(txt)
+
+                # Fax Cuneiform ocr
+                txt = tool.image_to_string(
+                    Image.open(filename),
+                    lang=self.lang,
+                    builder=pyocr.builders.TextBuilder(
+                        cuneiform_fax=True
+                    )
+                )
+                result.append(txt)
         return result
 
 

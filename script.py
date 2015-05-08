@@ -34,6 +34,7 @@ if __name__ == "__main__":
     for result in results:
         print result
 
+    print
     print 'Start - Fuzzy Matching'
     taxReceiptFuzzyRegex = TaxReceiptFuzzyRegex(results)
     print taxReceiptFuzzyRegex.identify_needed_fields()
