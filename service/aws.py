@@ -16,15 +16,24 @@ class BaseServiceIntegration(object):
         )
 
 
-class SimpleQueueServiceIntegration(BaseServiceIntegration):
+class BaseSimpleQueueServiceIntegration(BaseServiceIntegration):
+
+    def __init__(self):
+        super(BaseSimpleQueueServiceIntegration, self).__init__()
+        self.conn = sqs.connect_to_region(self.default_region)
+
+    def send_message(self, queue_name, message_body):
+        queue = self.conn.get_queue(queue_name)
+        self.conn.send_message(queue, message_body)
+
+
+class SimpleQueueServiceIntegration(BaseSimpleQueueServiceIntegration):
 
     def __init__(self, queue_name_in=None, queue_name_out=None):
         super(SimpleQueueServiceIntegration, self).__init__()
 
         self.queue_name_in = queue_name_in
         self.queue_name_out = queue_name_out
-
-        self.conn = sqs.connect_to_region(self.default_region)
 
     def handle_queue_in_message(self, queue_name_in,
                                 handle_process_message,
@@ -103,7 +112,7 @@ class TaxReceiptSimpleQueueServiceIntegration(SimpleQueueServiceIntegration):
                              'handle_queue_out_message_function parameter')
 
     def handle_process_message(self, message_body):
-        self.handle_process_message_function(message_body)
+        self.handle_process_message_function(self.queue_name_in, message_body)
 
     def handle_queue_out_message(self, response_body):
-        self.handle_queue_out_message_function(response_body)
+        self.handle_queue_out_message_function(self.queue_name_out, response_body)

@@ -14,7 +14,7 @@ from service.aws import TaxReceiptSimpleQueueServiceIntegration, \
 import json
 
 
-def handle_process_message_function(message_body):
+def handle_process_message_function(queue_name_in, message_body):
     '''
 
     >>> {
@@ -58,7 +58,9 @@ def handle_process_message_function(message_body):
     print 'Execution took', elapsed, 'seconds'
 
 
-def handle_queue_out_message_function(response_body):
+def handle_queue_out_message_function(queue_name_out, response_body):
+    json_response = json.dumps(response_body)
+
     pass
 
 if __name__ == "__main__":
