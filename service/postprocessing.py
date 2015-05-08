@@ -21,15 +21,20 @@ class BaseFuzzyRegex(object):
         return best_partial_matches
 
     @staticmethod
-    def remove_non_numeric(str):
+    def remove_non_numeric(text):
         non_decimal = re.compile(r'[^\d]+')
-        return non_decimal.sub('', str)
+        return non_decimal.sub('', text)
 
     @staticmethod
-    def remove_non_numeric_currency(str):
+    def remove_non_numeric_currency(text):
         regex = re.compile(r'[^\d\,\.]+')
-        temp = regex.sub('', str)
-        return temp.replace(',',".")
+        temp = regex.sub('', text)
+        return temp.replace(',', ".")
+
+    @staticmethod
+    def remove_non_numeric_date(text):
+        regex = re.compile(r'[^\d\/]+')
+        return regex.sub('', text)
 
 
 class TaxReceiptFuzzyRegex(object):
@@ -69,11 +74,11 @@ class TaxReceiptFuzzyRegex(object):
             # In case we haven't found a match yet we'll use the best match
             # for the priority group 1
             if cnpj_found is None:
-                cnpj_found = cnpjmerged_lists[0]
+                cnpj_found = BaseFuzzyRegex.remove_non_numeric(cnpjmerged_lists[0])
 
         # Try to get a good match for COO
         coo_priority_1_matches = BaseFuzzyRegex.approximate_match(
-            word_re='COO\:(\d{6})$',
+            word_re='COO\:\s*(\d{6})$',
             lines=lines,
             fuzziness=default_fuzziness
         )
@@ -98,7 +103,9 @@ class TaxReceiptFuzzyRegex(object):
                 valid_date_matches.sort(reverse=True)
                 date_found = Date.format(valid_date_matches[0])
             else:
-                date_found = date_priority_1_matches[0]
+                date_found = BaseFuzzyRegex.remove_non_numeric_date(
+                    date_priority_1_matches[0]
+                )
 
         # Try to get a good match for Total
         total_priority_1_matches = BaseFuzzyRegex.approximate_match(
