@@ -12,7 +12,7 @@ class BaseFuzzyRegex(object):
     @staticmethod
     def approximate_match(word_re, lines, fuzziness='e<=1'):
         logger = logging.getLogger(__name__)
-        logger.debug('Looking for %s' % word_re)
+        logger.debug('Looking for %s with fuzziness: %s' % (word_re, fuzziness))
         best_partial_matches = []
         search = re.compile(
             ur'(' + word_re + '){' + fuzziness + '}',
