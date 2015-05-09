@@ -5,6 +5,7 @@ from threading import Thread
 from boto import sqs, s3
 import time
 import logging
+import traceback
 
 
 class BaseServiceIntegration(object):
@@ -56,6 +57,7 @@ class SimpleQueueServiceIntegration(BaseSimpleQueueServiceIntegration):
 
                 except Exception:
                     self.logger.error('An error happened when trying to process this queue')
+                    traceback.print_exc()
             time.sleep(1)
 
     def handle_process_message(self, message_body):
