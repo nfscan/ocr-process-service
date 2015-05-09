@@ -5,8 +5,7 @@
 __author__ = 'paulo.rodenas'
 
 import logging
-import os
-import time
+import os, sys, time
 from tempfile import NamedTemporaryFile
 from service.ocr import *
 from service.postprocessing import TaxReceiptFuzzyRegex
@@ -72,5 +71,10 @@ if __name__ == "__main__":
         handle_process_message_function,
         handle_queue_out_message_function
     )
-    thread = aws_sqs.start_listening()
-    thread.join()
+
+    try:
+        thread = aws_sqs.start_listening()
+        while True:
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit()

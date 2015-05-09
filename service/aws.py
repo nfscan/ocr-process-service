@@ -73,7 +73,7 @@ class SimpleQueueServiceIntegration(BaseSimpleQueueServiceIntegration):
                                 self.handle_process_message,
                                 self.handle_queue_out_message,
                             ))
-
+        thread_sqs.daemon = True
         thread_sqs.start()
         return thread_sqs
 
