@@ -4,6 +4,7 @@
 
 __author__ = 'paulo.rodenas'
 
+import logging
 import os
 import time
 from tempfile import NamedTemporaryFile
@@ -15,16 +16,12 @@ import json
 
 
 def handle_process_message_function(queue_name_in, message_body):
-    '''
+    """
+    {"transaction_id": 1,"object": "IMG_2943_SMALL.jpeg"}
+    """
 
-    >>> {
-    ...     "transaction_id": 1,
-    ...     "object": "IMG_2943_SMALL.jpeg"
-    ... }
+    logger = logging.getLogger(__name__)
 
-    :param message_body:
-    :return:
-    '''
     start = time.time()
 
     # Receive message from SQS
@@ -34,29 +31,30 @@ def handle_process_message_function(queue_name_in, message_body):
     file_suffix = os.path.splitext(json_message.get('object'))[1]
     image_file = NamedTemporaryFile(suffix=file_suffix, delete=True)
 
+    # Retrieve file from Amazon S3
     s3 = SimpleStorageServiceIntegration()
     s3.download_file(json_message.get('object'), image_file.name)
 
+    # Perform OCR on it
     ocr_tool = PyOCRIntegration('eng')
     results = ocr_tool.image_to_string(image_file.name)
 
     # Close file which causes this temp file to be deleted
     image_file.close()
 
-    # Debug messages only.
-    for result in results:
-        print result
-
-    print '\nStart - Fuzzy Matching'
+    # Start looking for meaningful values
+    logger.debug('Start - Fuzzy Matching')
     tax_receipt_fuzzy_regex = TaxReceiptFuzzyRegex(results)
     ret_value = tax_receipt_fuzzy_regex.identify_needed_fields()
-    print ret_value
-    print 'End - Fuzzy Matching'
+    logger.debug(ret_value)
+    logger.debug('End - Fuzzy Matching')
 
+    # Calculate the time it took to perform all those steps
     end = time.time()
     elapsed = end - start
+    logger.debug('Execution took %f seconds' % elapsed)
 
-    print 'Execution took', elapsed, 'seconds'
+    ret_value.update({'transaction_id': json_message.get('transaction_id'), 'elapsedTime': elapsed})
     return ret_value
 
 
@@ -67,6 +65,8 @@ def handle_queue_out_message_function(queue_name_out, response_body):
     sqs_service.send_message(queue_name_out, json_response)
 
 if __name__ == "__main__":
+    logging.config.fileConfig('logging.ini')
+    PyOCRIntegration.check_required_software()
 
     aws_sqs = TaxReceiptSimpleQueueServiceIntegration(
         handle_process_message_function,

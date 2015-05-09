@@ -4,19 +4,21 @@ from itertools import ifilter, imap
 import regex as re
 from validation.cnpj import Cnpj
 from validation.date import Date
+import logging
 
 
 class BaseFuzzyRegex(object):
 
     @staticmethod
     def approximate_match(word_re, lines, fuzziness='e<=1'):
-        print 'Looking for', word_re
+        logger = logging.getLogger(__name__)
+        logger.debug('Looking for %s' % word_re)
         best_partial_matches = []
         search = re.compile(
             ur'(' + word_re + '){' + fuzziness + '}',
             flags=re.BESTMATCH | re.IGNORECASE).search
         for m in ifilter(None, imap(search, lines)):
-            print m.span(), m[0] # for debugginh purposes only
+            logger.debug('%s %s' % (m.span(), m[0]))
             best_partial_matches.append(m[0])
         return best_partial_matches
 
