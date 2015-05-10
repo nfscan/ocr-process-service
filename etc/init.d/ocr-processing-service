@@ -13,11 +13,11 @@ case "$1" in
   start)
     if [ -f $PIDFILE ]
     then
-      echo -n "$PIDFILE exists, process is already running or crashed\n"
+      echo -e "$PIDFILE exists, process is already running or crashed"
     else
       touch $PIDFILE $LOGFILE
       chown ec2-user:ec2-user $PIDFILE $LOGFILE
-      echo -n "Starting OCR Processing Service...\n"
+      echo -e "Starting OCR Processing Service..."
       python $SCRIPT >> $LOGFILE 2>&1 &
       echo "$!" > $PIDFILE
     fi
@@ -29,7 +29,7 @@ case "$1" in
     then
       echo "failed"
     else
-      kill -9 $(echo $PIDFILE)
+      kill -9 $(cat $PIDFILE)
       echo "$NAME stopped"
       rm -f $PIDFILE
     fi
