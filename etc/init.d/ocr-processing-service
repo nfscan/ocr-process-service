@@ -2,7 +2,7 @@
 
 SCRIPT=/home/ec2-user/ocr-processing-service/script.py
 NAME=ocr-processing-service
-DESC=OCR Processing Service
+DESC="OCR Processing Service"
 PIDFILE=/var/run/ocr-processing-service.pid
 LOGFILE=/var/log/ocr-processing-service.log
 
@@ -18,7 +18,8 @@ case "$1" in
       touch $PIDFILE $LOGFILE
       chown ec2-user:ec2-user $PIDFILE $LOGFILE
       echo -n "Starting OCR Processing Service...\n"
-      python $SCRIPT >> $LOGFILE 2>&1
+      python $SCRIPT >> $LOGFILE 2>&1 &
+      echo "$!" > $PIDFILE
     fi
     ;;    
     
@@ -28,7 +29,7 @@ case "$1" in
     then
       echo "failed"
     else
-      kill -9 $PIDFILE
+      kill -9 $(echo $PIDFILE)
       echo "$NAME stopped"
       rm -f $PIDFILE
     fi
