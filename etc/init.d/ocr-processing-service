@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT=/home/ec2-user/script.py
+SCRIPT=/home/ec2-user/ocr-processing-service/script.py
 NAME=ocr-processing-service
 DESC=OCR Processing Service
 PIDFILE=/var/run/ocr-processing-service.pid
