@@ -4,6 +4,7 @@ import logging
 from PIL import Image
 import pyocr
 import pyocr.builders
+from pyocr.cuneiform import CuneiformError
 
 
 class PyOCRIntegration(object):
@@ -30,23 +31,31 @@ class PyOCRIntegration(object):
                 logging.debug("Result %s" % txt)
             else:
                 # Default Cuneiform parameters
-                txt = tool.image_to_string(
-                    Image.open(filename),
-                    lang=self.lang
-                )
-                result.append(txt)
-                logging.debug("Result %s" % txt)
+                try:
+                    txt = tool.image_to_string(
+                        Image.open(filename),
+                        lang=self.lang
+                    )
+                    result.append(txt)
+                    logging.debug("Result %s" % txt)
+                except CuneiformError:
+                    logging.error('I got an error when trying to process this '
+                                  'image with Cuneiform')
 
                 # Fax Cuneiform ocr
-                txt = tool.image_to_string(
-                    Image.open(filename),
-                    lang=self.lang,
-                    builder=pyocr.builders.TextBuilder(
-                        cuneiform_fax=True
+                try:
+                    txt = tool.image_to_string(
+                        Image.open(filename),
+                        lang=self.lang,
+                        builder=pyocr.builders.TextBuilder(
+                            cuneiform_fax=True
+                        )
                     )
-                )
-                result.append(txt)
-                logging.debug("Result %s" % txt)
+                    result.append(txt)
+                    logging.debug("Result %s" % txt)
+                except CuneiformError:
+                    logging.error('I got an error when trying to process this '
+                                  'image with Cuneiform')
         return result
 
     @staticmethod
