@@ -23,17 +23,17 @@ class PyOCRIntegration(object):
                                              'PATH variable of your system')
 
         filename_split, fileextension_split = os.path.splitext(filename)
-        grayscaled_filename = filename_split + 'grayscale' + fileextension_split
+        converted_filename = filename_split + '.png'
         with WandImage(filename=filename) as img:
-            img.type = 'grayscale'
-            img.save(filename=grayscaled_filename)
+            img.format = 'png'
+            img.save(filename=converted_filename)
 
         result = []
         for tool in self.tools:
             logging.debug("Running %s tool" % tool.get_name())
             if tool.get_name() == "Tesseract":
                 txt = tool.image_to_string(
-                    Image.open(grayscaled_filename),
+                    Image.open(converted_filename),
                     lang=self.lang
                 )
                 result.append(txt)
@@ -42,7 +42,7 @@ class PyOCRIntegration(object):
                 # Default Cuneiform parameters
                 try:
                     txt = tool.image_to_string(
-                        Image.open(grayscaled_filename),
+                        Image.open(converted_filename),
                         lang=self.lang
                     )
                     result.append(txt)
@@ -54,7 +54,7 @@ class PyOCRIntegration(object):
                 # Fax Cuneiform ocr
                 try:
                     txt = tool.image_to_string(
-                        Image.open(grayscaled_filename),
+                        Image.open(converted_filename),
                         lang=self.lang,
                         builder=pyocr.builders.TextBuilder(
                             cuneiform_fax=True
