@@ -6,7 +6,7 @@ from PIL import Image
 import pyocr
 import pyocr.builders
 from pyocr.cuneiform import CuneiformError
-from wand.image import Image
+from wand.image import Image as WandImage
 
 
 class PyOCRIntegration(object):
@@ -24,7 +24,7 @@ class PyOCRIntegration(object):
 
         filename_split, fileextension_split = os.path.splitext(filename)
         grayscaled_filename = filename_split + 'grayscale' + fileextension_split
-        with Image(filename=filename) as img:
+        with WandImage(filename=filename) as img:
             img.type = 'grayscale'
             img.save(filename=grayscaled_filename)
 
