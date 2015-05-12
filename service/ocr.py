@@ -1,10 +1,12 @@
 __author__ = 'paulo.rodenas'
 
 import logging
+import os
 from PIL import Image
 import pyocr
 import pyocr.builders
 from pyocr.cuneiform import CuneiformError
+from wand.image import Image
 
 
 class PyOCRIntegration(object):
@@ -19,12 +21,19 @@ class PyOCRIntegration(object):
             raise PyOCRIntegrationNoOCRFound('No OCR tool has been found on '
                                              'this system. Make sure it\'s on'
                                              'PATH variable of your system')
+
+        filename_split, fileextension_split = os.path.splitext(filename)
+        grayscaled_filename = filename_split + 'grayscale' + fileextension_split
+        with Image(filename=filename) as img:
+            img.type = 'grayscale'
+            img.save(filename=grayscaled_filename)
+
         result = []
         for tool in self.tools:
             logging.debug("Running %s tool" % tool.get_name())
             if tool.get_name() == "Tesseract":
                 txt = tool.image_to_string(
-                    Image.open(filename),
+                    Image.open(grayscaled_filename),
                     lang=self.lang
                 )
                 result.append(txt)
@@ -33,7 +42,7 @@ class PyOCRIntegration(object):
                 # Default Cuneiform parameters
                 try:
                     txt = tool.image_to_string(
-                        Image.open(filename),
+                        Image.open(grayscaled_filename),
                         lang=self.lang
                     )
                     result.append(txt)
@@ -45,7 +54,7 @@ class PyOCRIntegration(object):
                 # Fax Cuneiform ocr
                 try:
                     txt = tool.image_to_string(
-                        Image.open(filename),
+                        Image.open(grayscaled_filename),
                         lang=self.lang,
                         builder=pyocr.builders.TextBuilder(
                             cuneiform_fax=True
