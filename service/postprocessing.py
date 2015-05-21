@@ -66,7 +66,23 @@ class TaxReceiptFuzzyRegex(object):
             fuzziness=default_fuzziness
         )
 
-        cnpjmerged_lists = cnpj_priority_1_matches + cnpj_priority_2_matches
+        lines_trim = list(lines)
+        lines_trim = [(w.replace(" ","")) for w in lines_trim]
+
+        cnpj_priority_3_matches = BaseFuzzyRegex.approximate_match(
+            word_re='(CNPJ\:\s*){0,1}(\d{2}[\.\,]*\d{3}[\.\,]*\d{3}\/{0,1}\d{4}.{0,1}\d{2})',
+            lines=lines_trim,
+            fuzziness=default_fuzziness
+        )
+
+        cnpj_priority_4_matches = BaseFuzzyRegex.approximate_match(
+            word_re='(\d{2}[\.\,]*\d{3}[\.\,]*\d{3}\/{0,1}\d{4}.{0,1}\d{2})',
+            lines=lines_trim,
+            fuzziness=default_fuzziness
+        )
+
+        cnpjmerged_lists = cnpj_priority_1_matches + cnpj_priority_2_matches + \
+                           cnpj_priority_3_matches + cnpj_priority_4_matches
         if not cnpjmerged_lists is None and len(cnpjmerged_lists) > 0:
             for possible_cnpj in cnpjmerged_lists:
                 possible_cnpj = BaseFuzzyRegex.remove_non_numeric(possible_cnpj)
