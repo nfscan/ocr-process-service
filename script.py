@@ -64,7 +64,7 @@ def handle_queue_out_message_function(queue_name_out, response_body):
     sqs_service.send_message(queue_name_out, json_response)
 
 if __name__ == "__main__":
-    logging.config.fileConfig('logging.ini')
+    logging.config.fileConfig('/etc/ocr-processing-service/logging.ini')
     PyOCRIntegration.check_required_software()
 
     aws_sqs = TaxReceiptSimpleQueueServiceIntegration(
