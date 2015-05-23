@@ -24,11 +24,6 @@ class PyOCRIntegration(object):
 
         filename_split, fileextension_split = os.path.splitext(filename)
 
-        resized_filename = filename_split + '_res_50' + fileextension_split
-        with WandImage(filename=filename) as img:
-            img.resize(int(img.width * 0.5), int(img.width * 0.5))
-            img.save(filename=resized_filename)
-
         grayscale_filename = filename_split + '_gray' + fileextension_split
         with WandImage(filename=filename) as img:
             img.type = 'grayscale'
@@ -45,19 +40,6 @@ class PyOCRIntegration(object):
                 result.append(txt)
                 logging.debug("Result %s" % txt)
 
-                txt = tool.image_to_string(
-                    Image.open(resized_filename),
-                    lang=self.lang
-                )
-                result.append(txt)
-                logging.debug("Result %s" % txt)
-
-                txt = tool.image_to_string(
-                    Image.open(grayscale_filename),
-                    lang=self.lang
-                )
-                result.append(txt)
-                logging.debug("Result %s" % txt)
             else:
                 # Default Cuneiform parameters
                 try:
@@ -66,23 +48,18 @@ class PyOCRIntegration(object):
                         lang=self.lang
                     )
                     result.append(txt)
-                    logging.debug("----------------------------PERTO")
                     logging.debug("Result %s" % txt)
 
-                    txt = tool.image_to_string(
-                        Image.open(resized_filename),
-                        lang=self.lang
-                    )
-                    result.append(txt)
-                    logging.debug("----------------------------LONGE")
-                    logging.debug("Result %s" % txt)
+                except CuneiformError:
+                    logging.error('I got an error when trying to process this '
+                                  'image with Cuneiform')
 
+                try:
                     txt = tool.image_to_string(
                         Image.open(grayscale_filename),
                         lang=self.lang
                     )
                     result.append(txt)
-                    logging.debug("----------------------------GRAY")
                     logging.debug("Result %s" % txt)
 
                 except CuneiformError:
@@ -99,20 +76,13 @@ class PyOCRIntegration(object):
                         )
                     )
                     result.append(txt)
-                    logging.debug("----------------------------PERTO")
                     logging.debug("Result %s" % txt)
 
-                    txt = tool.image_to_string(
-                        Image.open(resized_filename),
-                        lang=self.lang,
-                        builder=pyocr.builders.TextBuilder(
-                            cuneiform_fax=True
-                        )
-                    )
-                    result.append(txt)
-                    logging.debug("----------------------------LONGE")
-                    logging.debug("Result %s" % txt)
+                except CuneiformError:
+                    logging.error('I got an error when trying to process this '
+                                  'image with Cuneiform')
 
+                try:
                     txt = tool.image_to_string(
                         Image.open(grayscale_filename),
                         lang=self.lang,
@@ -121,7 +91,6 @@ class PyOCRIntegration(object):
                         )
                     )
                     result.append(txt)
-                    logging.debug("----------------------------LONGE")
                     logging.debug("Result %s" % txt)
 
                 except CuneiformError:
