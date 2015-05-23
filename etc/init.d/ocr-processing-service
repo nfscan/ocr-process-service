@@ -2,10 +2,19 @@
 # chkconfig: 345 99 01
 # description: OCR Processing Service
 
-SCRIPT=/root/downloads//ocr-processing-service/script.py
+### BEGIN INIT INFO
+# Provides:          OCR Processing Service
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       OCR Processing Service
+### END INIT INFO
+
+SCRIPT=/home/ec2-user/downloads/ocr-processing-service/script.py
 NAME=ocr-processing-service
 DESC="OCR Processing Service"
-PYTHON_BIN=/usr/local/bin/python
+PYTHON_BIN=/usr/bin/python
 PIDFILE=/var/run/ocr-processing-service.pid
 LOGFILE=/var/log/ocr-processing-service.log
 
