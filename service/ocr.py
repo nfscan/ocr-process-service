@@ -106,8 +106,10 @@ class PyOCRIntegration(object):
             raise PyOCRIntegrationNoOCRFound('No OCR tool has been found on '
                                              'this system. Make sure it\'s on')
         elif len(tools) == 1:
-            logger.info("I've found only one ocr tool [%s]. This is not exactly an error but you should get better " \
-                  "results if you have both Tesseract and Cuneiform installed" % tools[0].get_name())
+            logger.info("I've found only one ocr tool [%s]. This is not exactly "
+                        "an error but you should get better results if you have "
+                        "both Tesseract and Cuneiform installed"
+                        % tools[0].get_name())
         else:
             logger.info("I've found all required software. We're good to go =)")
 
