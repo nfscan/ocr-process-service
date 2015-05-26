@@ -31,7 +31,7 @@ class PyOCRIntegration(object):
             img.save(filename=grayscale_filename)
 
         adaptive_thresh_filename = filename_split + '_adt' + fileextension_split
-        OpenCVIntegration.adaptive_threshold(fileextension_split, adaptive_thresh_filename)
+        OpenCVIntegration.adaptive_threshold(filename, adaptive_thresh_filename)
 
         result = []
         for tool in tools:
