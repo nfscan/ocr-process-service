@@ -7,6 +7,7 @@ import pyocr
 import pyocr.builders
 from pyocr.cuneiform import CuneiformError
 from wand.image import Image as WandImage
+from opencv import OpenCVIntegration
 
 
 class PyOCRIntegration(object):
@@ -28,6 +29,9 @@ class PyOCRIntegration(object):
         with WandImage(filename=filename) as img:
             img.type = 'grayscale'
             img.save(filename=grayscale_filename)
+
+        adaptive_thresh_filename = filename_split + '_adt' + fileextension_split
+        OpenCVIntegration.adaptive_threshold(fileextension_split, adaptive_thresh_filename)
 
         result = []
         for tool in tools:
@@ -69,11 +73,8 @@ class PyOCRIntegration(object):
                 # Fax Cuneiform ocr
                 try:
                     txt = tool.image_to_string(
-                        Image.open(filename),
-                        lang=self.lang,
-                        builder=pyocr.builders.TextBuilder(
-                            cuneiform_fax=True
-                        )
+                        Image.open(adaptive_thresh_filename),
+                        lang=self.lang
                     )
                     result.append(txt)
                     logging.debug("Result %s" % txt)
@@ -82,20 +83,6 @@ class PyOCRIntegration(object):
                     logging.error('I got an error when trying to process this '
                                   'image with Cuneiform')
 
-                try:
-                    txt = tool.image_to_string(
-                        Image.open(grayscale_filename),
-                        lang=self.lang,
-                        builder=pyocr.builders.TextBuilder(
-                            cuneiform_fax=True
-                        )
-                    )
-                    result.append(txt)
-                    logging.debug("Result %s" % txt)
-
-                except CuneiformError:
-                    logging.error('I got an error when trying to process this '
-                                  'image with Cuneiform')
         return result
 
     @staticmethod
