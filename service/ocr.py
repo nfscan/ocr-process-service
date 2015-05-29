@@ -76,7 +76,7 @@ class PyOCRIntegration(object):
     class _OCRProcessingThread(Thread):
 
         def __init__(self, tool, lang, filename):
-            Thread.__init__()
+            Thread.__init__(self)
             self.return_value = ''
             self.tool = tool
             self.lang = lang
