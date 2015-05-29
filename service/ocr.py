@@ -70,7 +70,11 @@ class PyOCRIntegration(object):
             if not found_thread_alive:
                 threads_running = False
                 for p in processes:
-                    result += p.return_value
+                    result.append(p.return_value)
+
+        logging.debug('Result: ')
+        logging.debug(result)
+
         return result
 
     class _OCRProcessingThread(Thread):
