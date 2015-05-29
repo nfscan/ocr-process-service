@@ -8,6 +8,7 @@ import pyocr.builders
 from pyocr.cuneiform import CuneiformError
 from wand.image import Image as WandImage
 from opencv import OpenCVIntegration
+from threading import Thread
 
 
 class PyOCRIntegration(object):
@@ -33,57 +34,66 @@ class PyOCRIntegration(object):
         adaptive_thresh_filename = filename_split + '_adt' + fileextension_split
         OpenCVIntegration.adaptive_threshold(filename, adaptive_thresh_filename)
 
-        result = []
+        processes = []
         for tool in tools:
-            logging.debug("Running %s tool" % tool.get_name())
             if tool.get_name() == "Tesseract":
-                txt = tool.image_to_string(
-                    Image.open(filename),
-                    lang=self.lang
-                )
-                result.append(txt)
-                logging.debug("Result %s" % txt)
+
+                thread_t = self._OCRProcessingThread(tool, self.lang, filename)
+                thread_t.start()
+                processes.append(thread_t)
 
             else:
-                # Default Cuneiform parameters
-                try:
-                    txt = tool.image_to_string(
-                        Image.open(filename),
-                        lang=self.lang
-                    )
-                    result.append(txt)
-                    logging.debug("Result %s" % txt)
+                thread_c_raw = self._OCRProcessingThread(tool, self.lang,
+                                                         filename)
+                thread_c_raw.start()
+                processes.append(thread_c_raw)
 
-                except CuneiformError:
-                    logging.error('I got an error when trying to process this '
-                                  'image with Cuneiform')
+                thread_c_gs = self._OCRProcessingThread(tool, self.lang,
+                                                        grayscale_filename)
+                thread_c_gs.start()
+                processes.append(thread_c_gs)
 
-                try:
-                    txt = tool.image_to_string(
-                        Image.open(grayscale_filename),
-                        lang=self.lang
-                    )
-                    result.append(txt)
-                    logging.debug("Result %s" % txt)
+                thread_c_prd = self._OCRProcessingThread(tool, self.lang,
+                                                         adaptive_thresh_filename)
+                thread_c_prd.start()
+                processes.append(thread_c_prd)
 
-                except CuneiformError:
-                    logging.error('I got an error when trying to process this '
-                                  'image with Cuneiform')
+        # Wait this all threads finish processing
+        result = []
+        threads_running = True
+        while threads_running:
+            found_thread_alive = False
+            for p in processes:
+                if p.is_alive():
+                    found_thread_alive = True
 
-                # Fax Cuneiform ocr
-                try:
-                    txt = tool.image_to_string(
-                        Image.open(adaptive_thresh_filename),
-                        lang=self.lang
-                    )
-                    result.append(txt)
-                    logging.debug("Result %s" % txt)
-
-                except CuneiformError:
-                    logging.error('I got an error when trying to process this '
-                                  'image with Cuneiform')
-
+            if not found_thread_alive:
+                threads_running = False
+                for p in processes:
+                    result += p.return_value
         return result
+
+    class _OCRProcessingThread(Thread):
+
+        def __init__(self, tool, lang, filename):
+            Thread.__init__()
+            self.return_value = ''
+            self.tool = tool
+            self.lang = lang
+            self.filename = filename
+
+        def run(self):
+            logging.debug("Running %s tool" % self.tool.get_name())
+            try:
+                txt = self.tool.image_to_string(
+                    Image.open(self.filename),
+                    lang=self.lang
+                )
+                self.return_value = txt
+                logging.debug("Result %s" % txt)
+            except CuneiformError:
+                    logging.error('I got an error when trying to process this '
+                                  'image with %s' % self.tool.get_name())
 
     @staticmethod
     def check_required_software():
@@ -99,6 +109,7 @@ class PyOCRIntegration(object):
                         % tools[0].get_name())
         else:
             logger.info("I've found all required software. We're good to go =)")
+
 
 class PyOCRIntegrationNoOCRFound(Exception):
 
