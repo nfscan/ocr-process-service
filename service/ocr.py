@@ -91,7 +91,7 @@ class PyOCRIntegration(object):
                     lang=self.lang
                 )
                 self.return_value = txt
-                logging.debug("Result %s" % txt)
+                # logging.debug("Result %s" % txt)
             except CuneiformError:
                     logging.error('I got an error when trying to process this '
                                   'image with %s' % self.tool.get_name())
