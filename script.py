@@ -41,6 +41,9 @@ def handle_process_message_function(queue_name_in, message_body):
     # Close file which causes this temp file to be deleted
     image_file.close()
 
+    logging.debug('Result: ')
+    logging.debug(results)
+
     # Start looking for meaningful values
     logger.debug('Start - Fuzzy Matching')
     tax_receipt_fuzzy_regex = TaxReceiptFuzzyRegex(results)

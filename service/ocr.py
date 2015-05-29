@@ -72,9 +72,6 @@ class PyOCRIntegration(object):
                 for p in processes:
                     result.append(p.return_value)
 
-        logging.debug('Result: ')
-        logging.debug(result)
-
         return result
 
     class _OCRProcessingThread(Thread):
