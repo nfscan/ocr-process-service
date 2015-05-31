@@ -72,7 +72,20 @@ class PyOCRIntegration(object):
                 for p in processes:
                     result.append(p.return_value)
 
+        # Removing generated files
+        self._cleanup(filename)
+        self._cleanup(grayscale_filename)
+        self._cleanup(adaptive_thresh_filename)
+
         return result
+
+    def _cleanup(self, filename):
+        ''' Tries to remove the given filename. Ignores non-existent files '''
+        try:
+            os.remove(filename)
+        except OSError:
+            pass
+
 
     class _OCRProcessingThread(Thread):
 
