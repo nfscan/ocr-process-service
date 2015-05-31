@@ -73,7 +73,6 @@ class PyOCRIntegration(object):
                     result.append(p.return_value)
 
         # Removing generated files
-        self._cleanup(filename)
         self._cleanup(grayscale_filename)
         self._cleanup(adaptive_thresh_filename)
 
