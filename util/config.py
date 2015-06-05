@@ -14,7 +14,7 @@ class ConfigReader(object):
     OPTION_QUEUE_NAME_OUT = 'queue_name_out'
     OPTION_BUCKET_NAME = 'bucket_name'
 
-    def __init__(self, config_file='/etc/ocr-processing-service/ocr-processing-service.cfg'):
+    def __init__(self, config_file='/etc/ocr-process-service/ocr-process-service.cfg'):
         config = ConfigParser.RawConfigParser(allow_no_value=True)
         config.read(config_file)
         self.config = config
