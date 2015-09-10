@@ -75,6 +75,12 @@ ocr-process-service works on top of boto to access AWS services under the hoods.
     bucket_name = TheBucketNameYouHaveCreated
     ```
 
+## TODO
+
+It's been noticed that cuneiform works more stable when running on 32 bits operational systems. We do believe that this is no longer our hardware reality. So if you're a good C/C++ developer and want to port it to 64 bits OS feel free to do so :)
+
+Make ocr-process-service to process a image locally instead of waiting it through a AWS SQS queue.
+
 ## Contributing 
 
 You're encouraged to contribute to nfscan. Fork the code from https://github.com/nfscan/ocr-process-service and submit pull requests.
