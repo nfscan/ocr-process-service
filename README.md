@@ -60,7 +60,7 @@ ocr-process-service works on top of boto to access AWS services under the hoods.
 
 * **ocr-process-service.cfg**
 
-    If you have followed this tutorial then it's likely that your config file will look like this:
+    If you have followed [this tutorial](https://github.com/nfscan/nfscan/wiki/Develpment-environment---%5BPortuguese%5D) then it's likely that your config file will look like this:
 
     ```
     [aws_account]
