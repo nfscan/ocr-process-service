@@ -48,6 +48,7 @@ pip install -r requirements.txt
 sudo mv etc/init.d/ocr-process-service /etc/init.d
 sudo mkdir -p /etc/ocr-process-service
 sudo mv etc/ocr-process-service/* /etc/ocr-process-service/
+python script.py
 ```
 
 ##Config
