@@ -34,9 +34,7 @@ A symbolic link will do the trick ;)
 
 ImageMagick-devel
 ```
-libmagickwand-dev for APT on Debian/Ubuntu
-imagemagick for MacPorts/Homebrew on Mac
-ImageMagick-devel for Yum on CentOS
+ImageMagick-c++-devel for Yum on CentOS
 ```
 
 OpenCV-Python
