@@ -7,7 +7,7 @@ import pyocr
 import pyocr.builders
 from pyocr.cuneiform import CuneiformError
 from wand.image import Image as WandImage
-from opencv import OpenCVIntegration
+from scikitimage import ScikitImageIntegration
 from threading import Thread
 
 
@@ -32,7 +32,7 @@ class PyOCRIntegration(object):
             img.save(filename=grayscale_filename)
 
         adaptive_thresh_filename = filename_split + '_adt' + fileextension_split
-        OpenCVIntegration.adaptive_threshold(filename, adaptive_thresh_filename)
+        ScikitImageIntegration.adaptive_threshold(grayscale_filename, adaptive_thresh_filename)
 
         processes = []
         for tool in tools:

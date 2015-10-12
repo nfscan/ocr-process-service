@@ -2,3 +2,5 @@ boto
 pyocr
 regex
 wand
+scikit-image
+scipy
