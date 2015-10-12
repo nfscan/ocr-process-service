@@ -91,13 +91,6 @@ ln -s /usr/local/lib/libstd32.so.0 /usr/lib/libstd32.so.0
 ln -s /usr/local/lib/libcfcompat.so.0 /usr/lib/libcfcompat.so.0
 ```
 
-OpenCV-Python
-```
-Follow this instructions depending on your OS.
-
-https://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_setup/py_table_of_contents_setup/py_table_of_contents_setup.html#py-table-of-content-setup
-```
-
 Finally
 ```{Shell}
 git clone https://github.com/nfscan/ocr-process-service.git
