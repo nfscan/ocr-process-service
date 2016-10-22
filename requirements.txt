@@ -1,6 +1,8 @@
 boto
+Pillow
 pyocr
 regex
 wand
+numpy
 scipy
 scikit-image

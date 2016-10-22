@@ -17,10 +17,10 @@ Obs.: Make sure you have tesseract accessible under the /usr/bin/
 A symbolic link will do the trick ;)
 ```
 
-ImageMagick-c++-devel
+OS dependencies
 ```{Shell}
 # for Yum on CentOS
-yum install ImageMagick-c++-devel
+yum install ImageMagick-c++-devel blas-devel lapack-devel python-devel
 ```
 
 Cuneiform - Part 1
